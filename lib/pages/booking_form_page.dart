@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BookingFormPage extends StatefulWidget {
   final String modelName;
@@ -31,22 +32,37 @@ class _BookingFormPageState extends State<BookingFormPage> {
     super.dispose();
   }
 
+  /// ✅ Razorpay redirect function
+  void _launchRazorpay(double amount) async {
+    final uri = Uri.parse(
+      'https://raam-ather-ev-selector.vercel.app/payment.html'
+      '?amount=${amount.toInt()}'
+      '&name=${Uri.encodeComponent(_nameController.text.trim())}'
+      '&phone=${_phoneController.text.trim()}',
+    );
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch Razorpay page';
+    }
+  }
+
+  /// 🔘 Form submission handler
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
       final name = _nameController.text.trim();
       final phone = _phoneController.text.trim();
       final location = _locationController.text.trim();
 
-      // You’ll replace this later with Supabase logic
       debugPrint('Model: ${widget.modelName}');
       debugPrint('Color: $selectedColor');
       debugPrint('Name: $name');
       debugPrint('Phone: $phone');
       debugPrint('Location: $location');
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Booking submitted!')),
-      );
+      // 👇 Launch Razorpay after validation
+      _launchRazorpay(10000); // ₹10,000 hardcoded for now
     }
   }
 
