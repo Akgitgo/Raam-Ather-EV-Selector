@@ -7,20 +7,20 @@
 <body onload="initPayment()">
   <script>
     function initPayment() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const amount = urlParams.get('amount'); // Amount in paise (₹1 = 100 paise)
-      const name = urlParams.get('name');
-      const phone = urlParams.get('phone');
+      const params = new URLSearchParams(window.location.search);
+      const amount = params.get('amount') || 10000;
+      const name = params.get('name') || 'Customer';
+      const phone = params.get('phone') || '9999999999';
 
       var options = {
-        key: "rzp_test_bBF8n76jP3F7Sy", // 🟢 Replace this with your real Key ID
-        amount: amount,
+        key: "rzp_test_bBF8n76jP3F7Sy", // 🟢 Replace with your own key
+        amount: amount * 100, // Razorpay expects paise
         currency: "INR",
         name: "Raam Ather EV Booking",
         description: "EV Scooter Booking",
         handler: function (response) {
           alert("✅ Payment Successful! ID: " + response.razorpay_payment_id);
-          window.location.href = "/"; // go back to homepage or thank-you page
+          window.location.href = "/"; // redirect after success
         },
         prefill: {
           name: name,
